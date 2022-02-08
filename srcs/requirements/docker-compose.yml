@@ -1,0 +1,40 @@
+version: "3"
+services:
+  nginx:
+    container_name: nginx
+    image: inception/nginx:1.0
+    ports:
+      -443:443
+    networks:
+      -fontend
+      -backend
+    restart:
+      on-failure
+  wordpress:
+    container_name: wordpress
+    image: inception/wordpress:1.0
+    depends_on:
+      maria_db
+    ports:
+     -443:443
+    networks:
+      -backend
+      -backend2
+    volumes:
+      -/var/container/CDN:/var/www/html
+    restart:
+      on-failure
+  maria_db:
+    container_name: maria_db
+    image: inception/mariadb:1.0
+    networks:
+      -backend2
+    volumes:
+      -/var/container/DB:/var/lib/mysql
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    external: false
+  backend2:
+    external: false
